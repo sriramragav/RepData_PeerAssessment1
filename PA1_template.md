@@ -8,7 +8,8 @@ output:
 
 ## Loading and preprocessing the data
 
-```{r}
+
+```r
 setwd("C:\\MyFolder\\DataScience\\MyRWork\\5ReproducibleResearch\\Week2\\Project")
 
 # #Download the zip file from the internet
@@ -20,12 +21,12 @@ unzip("personalActivity.zip")
 
 #Load the data
 activity <- read.csv("activity.csv")
-
 ```
 
 ## What is mean total number of steps taken per day?
 
-```{r}
+
+```r
 #Ignore the NAs...
 activityWithoutNA <- activity[complete.cases(activity),]
 answerSum <- as.data.frame(tapply(activityWithoutNA$steps, activityWithoutNA$date, sum))
@@ -37,22 +38,24 @@ hist(answerSum$steps
      , main="Total number of steps taken per day"
      , xlab="Steps Taken"
      )
+```
 
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png) 
 
+```r
 #mean, median calculation
 meanSum <- mean(answerSum$steps)
 medianSum <- median(answerSum$steps)
-
 ```
 
 ### Total number of steps taken per day:
-* Mean Value: `r meanSum`.
-* Median Value: `r medianSum`.
+* Mean Value: 9354.2295082.
+* Median Value: 1.0395 &times; 10<sup>4</sup>.
 
 ## What is the average daily activity pattern?
 
-```{r}
 
+```r
 #Find the mean
 answerMean <- as.data.frame(tapply(activityWithoutNA$steps, activityWithoutNA$interval, mean))
 colnames(answerMean)[1] <- "steps"
@@ -65,21 +68,24 @@ plot(x=answerMean$steps
      , xlab="Interval"
      , ylab="Total Steps"
      )
+```
 
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png) 
+
+```r
 #To find the 5-minute interval containing the maximum number of steps
 maxMean <- max(answerMean$steps)
 answerMean$interval <- rownames(answerMean)
 highInterval <- answerMean[answerMean$steps == maxMean,2]
-
 ```
 
 ### Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
-* 5-minute interval : `r highInterval`
+* 5-minute interval : 835
 
 ## Inputing missing values
 
-```{r}
 
+```r
 # 1.  Calculate and report the total number of missing values in the 
 # dataset (i.e. the total number of rows with NAs)
 
@@ -92,6 +98,14 @@ totalMissingValues <- sum(is.na(activity$steps))
 
 #We are using the mean for that 5-minute interval...
 newDataSet <- merge(activity,answerMean,by.x="interval",by.y="row.names")
+```
+
+```
+## Warning in merge.data.frame(activity, answerMean, by.x = "interval", by.y =
+## "row.names"): column name 'interval' is duplicated in the result
+```
+
+```r
 newDataSet$steps.x <- 
   ifelse((newDataSet$steps.x == 0 | is.na(newDataSet$steps.x))
          , newDataSet$steps.y, newDataSet$steps.x)
@@ -104,18 +118,21 @@ hist(sumOfMean$steps
      , main="Total number of steps per day"
      , xlab="Steps"
      , ylab="Frequency")
+```
 
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png) 
+
+```r
 #mean and median values
 newMean <- mean(sumOfMean$steps)
 newMedian <- median(sumOfMean$steps)
-
 ```
 
-The total number of missing values in the original dataset is `r totalMissingValues`
+The total number of missing values in the original dataset is 2304
 
 The new Mean and Median values can be found below:
-* Mean : `r newMean`
-* Median: `r newMedian`
+* Mean : 1.5875987 &times; 10<sup>4</sup>
+* Median: 1.5837736 &times; 10<sup>4</sup>
 
 As you can see, the new values, obtained after subsituting the "mean for the five
   minute interval" for missing values in the original dataset are  higher than the
@@ -124,8 +141,8 @@ As you can see, the new values, obtained after subsituting the "mean for the fiv
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-```{r}
 
+```r
 # 1.  Create a new factor variable in the dataset with two levels - 
 # "weekday" and "weekend" indicating whether a given date is a weekday 
 # or weekend day.
@@ -150,6 +167,7 @@ xyplot(  Steps ~ interval | dayCategory,
          y.lab=list(label="Steps"),
          layout=c(1,2)
       )
-
 ```
+
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png) 
  
